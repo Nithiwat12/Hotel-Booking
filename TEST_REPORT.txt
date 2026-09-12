@@ -1,0 +1,34 @@
+Soda Hotel - Database connection fix test report
+Date: 2026-09-12
+
+Fixed:
+- Removed the hard-coded PGOPTIONS endpoint workaround.
+- Removed the unsupported/reliability-prone PDO DSN options=endpoint%3D... approach.
+- Added automatic Neon endpoint extraction from the hostname.
+- Added automatic retry for old XAMPP/libpq clients:
+  endpoint=<endpoint-id>;<real-password>
+  This retry is used only when Neon returns "Endpoint ID is not specified".
+- Added clear validation when .env still contains a placeholder password.
+- Simplified .env/.env.example to use a normal Neon DATABASE_URL.
+
+Tests performed:
+PASS - PHP syntax check for every PHP file in the project.
+PASS - Neon endpoint extraction from normal/pooler hostnames.
+PASS - URL-decoding of database username/password.
+PASS - PDO DSN generation.
+PASS - Legacy endpoint-prefixed password stripping.
+PASS - Old-libpq Neon fallback password generation.
+PASS - Placeholder-password guard.
+
+Important:
+The uploaded .env did not contain a real Neon password; it contained a placeholder.
+Therefore a live authenticated query to the user's Neon project cannot be completed from this package until the real password is entered.
+
+Before running in XAMPP:
+1. Open .env
+2. Replace YOUR_NEON_PASSWORD with the real Neon password from Neon Console > Connect.
+3. Put the folder in C:\xampp\htdocs\hotel
+4. Start Apache.
+5. Open http://localhost/hotel/main.php
+
+If pdo_pgsql is disabled, enable extension=pdo_pgsql in XAMPP php.ini and restart Apache.
